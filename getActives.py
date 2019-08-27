@@ -96,8 +96,8 @@ activesNASDAQ = pd.DataFrame({"name": activeNASDAQNames, "close": activeNASDAQPr
 # Connect to the MSSQL Server
 engine = create_engine('mssql+pyodbc:///?odbc_connect=%s' % params)
 print("Writing NYSE most actives to SQL Server")
-activesNYSE.to_sql(name='actives_nyse', con=engine, if_exists='replace', index=False)
+activesNYSE.to_sql(name='activesNYSE', con=engine, if_exists='replace', index=False)
 print("Writing NASDAQ most actives to SQL Server")
-activesNASDAQ.to_sql(name='actives_nasdaq', con=engine, if_exists='replace', index=False)
+activesNASDAQ.to_sql(name='activesNasdaq', con=engine, if_exists='replace', index=False)
 
 print("Done")

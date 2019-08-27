@@ -15,6 +15,7 @@ import time
 from alpha_vantage.timeseries import TimeSeries
 from sqlalchemy import create_engine
 from sqlalchemy import update
+from sqlalchemy import select
 
 # Setup the CMELab MSSQL Database connection
 params =   'DRIVER=' + os.getenv("SQLDRIVER") + ';'
@@ -38,7 +39,7 @@ tickerList = {
     "BAX":"Baxter International Inc",
     "BLK":"Blackrock Inc.",
     "BMY":"Bristol-Meyers Squibb Co.",
-    "CELH":"Celsisus Holdings",
+    "CELH":"Celsius Holdings",
     "CL":"Colgate-Palmolive Company",
     "DIS":"Walt Disney Co",
     "EMB":"iShares J.P. Morgan USD Emerging Markets Bond ETF",
@@ -79,49 +80,52 @@ tickerList = {
     "DIS":"Walt Disney Co"
 }
 
+# Connect to the MSSQL Server
+engine = create_engine('mssql+pyodbc:///?odbc_connect=%s' % params)
+tickerList = engine.execute('SELECT * FROM stocks')
+
 # Get the Alphavantage data
 totalData = pd.DataFrame()
 totalChangeData = pd.DataFrame()
 timestamp = str(time.ctime(int(time.time())))
 
-for stockTicker in tickerList:
+for row in tickerList:
+    stockID = row['id']
+    stockTicker = row['ticker']
+    stockName = row['name'][:25]
+
+    # Get the data
     print("Fetching " + stockTicker + " from Alphavantage.com at " + str(time.ctime(int(time.time()))))
-    stockName = tickerList[stockTicker]
     data, meta_data = ts.get_daily(symbol=stockTicker, outputsize='full')
 
-    # Add index as new column to data frame
-    data['date'] = data.index
-    data['ticker'] = stockTicker
-    data['name'] = stockName[:25]
-    data['timestamp'] = timestamp
+    # Put the data into a data frame
+    stockDate = data.index
+    stockClose = data['4. close']
+    stockData = pd.DataFrame({"stocksID": stockID, "closingPrice": stockClose, "date": stockDate})
+    totalData = totalData.append(stockData)
 
-    totalData = totalData.append(data)
-
-    # Create DataFrame for change data table
-    c = data.head(3)["4. close"]
-    d = data.head(3)["date"]
-    yesterday = c[2]
+    # Put the change data into a data frame
+    c = stockData.tail(3)['closingPrice']
+    d = stockData.tail(3)['date']
+    yesterday = c[0]
     today = c[1]
     increase = today - yesterday
     pchange = increase / yesterday * 100
     increase = round(increase, 2)
     pchange = round(pchange, 2)
+    change = [[d[1], stockID, increase, pchange]]
 
-    change = [[d[1], stockTicker, increase, pchange]]
-    changeData = pd.DataFrame(change, columns=['date', 'ticker', 'change', 'pchange'])
-
+    changeData = pd.DataFrame(change, columns=['date', 'stocksID', 'change', 'pchange'])
     totalChangeData = totalChangeData.append(changeData)
+
     time.sleep(15) # Needed for free version of Alphavantage due to limit of 5 data pulls per minute
 
-print("Data pull from Alphavantage successful.  Writing to SQL Server now.")
+print("Data pull from Alphavantage successful.")
 
-# Connect to the MSSQL Server
-engine = create_engine('mssql+pyodbc:///?odbc_connect=%s' % params)
-print("Writing daily change data to SQL Server at " + str(time.ctime(int(time.time()))))
-print("Fetching " + stockTicker + " from Alphavantage.com at " + str(time.ctime(int(time.time()))))
-    
-totalChangeData.to_sql(name='daily_change', con=engine, if_exists='replace', index=False)
+# Write the data to the server
+print("Writing daily change data to SQL Server now.")
+totalChangeData.to_sql(name='dailyChange', con=engine, if_exists='replace', index=False)
 print("Writing daily data to SQL Server at " + str(time.ctime(int(time.time()))))
-totalData.to_sql(name='daily', con=engine, if_exists='replace', index=False)
+totalData.to_sql(name='dailyData', con=engine, if_exists='replace', index=False)
 
 print("Done")
