@@ -30,12 +30,14 @@ params = urllib.quote_plus(params)
 # Setup the Finviz Scraper
 activeNYSENames = []
 activeNYSEPrices = []
+activeNYSEChanges = []
 activeNYSEPercentChanges = []
 activeNYSETotalVolumes = []
 activeNYSEURL = "https://finviz.com/screener.ashx?v=111&s=ta_mostactive&f=exch_nyse"
 
 activeNASDAQNames = []
 activeNASDAQPrices = []
+activeNASDAQChanges = []
 activeNASDAQPercentChanges = []
 activeNASDAQTotalVolumes = []
 activeNASDAQURL = "https://finviz.com/screener.ashx?v=111&s=ta_mostactive&f=exch_nasd"
@@ -48,22 +50,31 @@ soup = BeautifulSoup(data, features='lxml')
 print("Grabbing NYSE Most Active")
 for listing in soup.find_all('tr', attrs={'class': re.compile('table\-(?:(?!\-row\-cp)(?:.|\n))*\-row\-cp')}):
     i = 0
+    price = 0
+    percent = 0
     for name in listing.find_all('a', attrs={'class': 'screener-link'}):
         item = name.get_text()
         item = item.replace(',', '')
 
         if(i == 1):
-            item = item[:25]
+            item = item[:20]
             activeNYSENames.append(item)
         if(i == 7):
             activeNYSEPrices.append(item)
+            price = item
         if(i == 8):
             item = item.replace('%', '')
             activeNYSEPercentChanges.append(item)
+            percent = item
         if(i == 9):
             activeNYSETotalVolumes.append(item)
         i = i + 1
 
+    # Calculate actual change from percentage
+    if(float(percent) != 0):
+        activeNYSEChanges.append(float(price) * (float(percent) / 100.0))
+    else:
+        activeNYSEChanges.append("0.00")
 # Scrape Finviz for NASDAQ
 r = requests.get(activeNASDAQURL)
 data = r.text
@@ -73,25 +84,35 @@ print("Grabbing NASDAQ Most Active")
 timestamp = str(time.ctime(int(time.time())))
 for listing in soup.find_all('tr', attrs={'class': re.compile('table\-(?:(?!\-row\-cp)(?:.|\n))*\-row\-cp')}):
     i = 0
+    price = 0
+    percent = 0
     for name in listing.find_all('a', attrs={'class': 'screener-link'}):
         item = name.get_text()
         item = item.replace(',', '')
 
         if(i == 1):
-            item = item[:25]
+            item = item[:20]
             activeNASDAQNames.append(item)
         if(i == 7):
             activeNASDAQPrices.append(item)
+            price = item
         if(i == 8):
             item = item.replace('%', '')
             activeNASDAQPercentChanges.append(item)
+            percent = item
         if(i == 9):
             activeNASDAQTotalVolumes.append(item)
         i = i + 1
 
+    # Calculate actual change from percentage
+    if (float(percent) != 0):
+        activeNASDAQChanges.append(float(price) * (float(percent) / 100.0))
+    else:
+        activeNASDAQChanges.append("0.00")
+
 # Put results into DataFrame
-activesNYSE = pd.DataFrame({"name": activeNYSENames, "close": activeNYSEPrices, "pchange": activeNYSEPercentChanges, "volume": activeNYSETotalVolumes, "timestamp": timestamp})
-activesNASDAQ = pd.DataFrame({"name": activeNASDAQNames, "close": activeNASDAQPrices, "pchange": activeNASDAQPercentChanges, "volume": activeNASDAQTotalVolumes, "timestamp": timestamp})
+activesNYSE = pd.DataFrame({"name": activeNYSENames, "close": activeNYSEPrices, "change": activeNYSEChanges, "pchange": activeNYSEPercentChanges, "volume": activeNYSETotalVolumes, "timestamp": timestamp})
+activesNASDAQ = pd.DataFrame({"name": activeNASDAQNames, "close": activeNASDAQPrices, "change": activeNASDAQChanges, "pchange": activeNASDAQPercentChanges, "volume": activeNASDAQTotalVolumes, "timestamp": timestamp})
 
 # Connect to the MSSQL Server
 engine = create_engine('mssql+pyodbc:///?odbc_connect=%s' % params)

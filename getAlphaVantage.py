@@ -34,6 +34,7 @@ ts = TimeSeries(key=apiKey, output_format='pandas', indexing_type='date')
 
 tickerList = {
     "AMZN":"Amazon.com, Inc.",
+    "APPLE":"Apple Inc.",
     "ATVI":"Activision Blizzard Inc.",
     "BA":"Boeing Co",
     "BAX":"Baxter International Inc",
@@ -75,11 +76,6 @@ tickerList = {
     "XOM":"Exxon Mobil"
 }
 
-# This is a temporary thing for testing
-tickerList = {
-    "DIS":"Walt Disney Co"
-}
-
 # Connect to the MSSQL Server
 engine = create_engine('mssql+pyodbc:///?odbc_connect=%s' % params)
 tickerList = engine.execute('SELECT * FROM stocks')
@@ -87,6 +83,7 @@ tickerList = engine.execute('SELECT * FROM stocks')
 # Get the Alphavantage data
 totalData = pd.DataFrame()
 totalChangeData = pd.DataFrame()
+totalTimestampData = pd.DataFrame()
 timestamp = str(time.ctime(int(time.time())))
 
 for row in tickerList:
@@ -114,15 +111,18 @@ for row in tickerList:
     increase = round(increase, 2)
     pchange = round(pchange, 2)
     change = [[d[1], stockID, increase, pchange]]
-
     changeData = pd.DataFrame(change, columns=['date', 'stocksID', 'change', 'pchange'])
     totalChangeData = totalChangeData.append(changeData)
 
+    timestampData = pd.DataFrame({"stocksID": stockID, "timestamp": timestamp}, index=[0])
+    totalTimestampData = totalTimestampData.append(timestampData)
     time.sleep(15) # Needed for free version of Alphavantage due to limit of 5 data pulls per minute
 
 print("Data pull from Alphavantage successful.")
 
 # Write the data to the server
+print("Writing timestamp data to SQL Server at " + str(time.ctime(int(time.time()))))
+totalTimestampData.to_sql(name='stocksTimestamp', con=engine, if_exists='replace', index=True)
 print("Writing daily change data to SQL Server now.")
 totalChangeData.to_sql(name='dailyChange', con=engine, if_exists='replace', index=False)
 print("Writing daily data to SQL Server at " + str(time.ctime(int(time.time()))))
