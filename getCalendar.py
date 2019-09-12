@@ -40,15 +40,23 @@ eventAllDays = []
 utc=pytz.UTC
 tdy = datetime.datetime.now()
 tmw = tdy + datetime.timedelta(days=1)
+mdy = tdy - datetime.timedelta(days=tdy.weekday())
+sat = mdy + datetime.timedelta(days=6)
+
 today = utc.localize(tdy)
 tomorrow = utc.localize(tmw)
-
+monday = utc.localize(mdy)
+saturday = utc.localize(sat)
 
 # Begin getting the recurring events for the current day
 startDate = (today.year, today.month, today.day)
 endDate = (tomorrow.year, tomorrow.month, tomorrow.day)
-events = recurring_ical_events.of(googleCal).between(startDate, endDate)
 
+# Or we can get the recurring events for the current week
+startDate = (monday.year, monday.month, monday.day)
+endDate = (saturday.year, saturday.month, saturday.day)
+
+events = recurring_ical_events.of(googleCal).between(startDate, endDate)
 eventID = 0
 for event in events:
     eventID = eventID + 1
