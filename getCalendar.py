@@ -31,7 +31,11 @@ googleCal=Calendar.from_ical(g)
 eventIDs = []
 eventDates = []
 eventStartTimes = []
+eventStartHours = []
+eventStartMinutes = []
 eventEndTimes = []
+eventEndHours = []
+eventEndMinutes = []
 eventNames = []
 eventDetails = []
 eventAllDays = []
@@ -70,14 +74,24 @@ for event in events:
             minute = "00"
         elif event["DTSTART"].dt.minute < 10:
             minute = "0" + str(event["DTSTART"].dt.minute)
-        start = str(event["DTSTART"].dt.hour) + ":" + minute
+        startMinute = int(minute)
+        startHour = int(event["DTSTART"].dt.hour)
+        if startHour > 12:
+            start = str(event["DTSTART"].dt.hour - 12) + ":" + minute + " pm"
+        else:
+            start = str(event["DTSTART"].dt.hour) + ":" + minute + " am"
 
         minute = str(event["DTEND"].dt.minute)
         if str(event["DTEND"].dt.minute) == "0":
             minute = "00"
         elif event["DTEND"].dt.minute < 10:
             minute = "0" + str(event["DTEND"].dt.minute)
-        end = str(event["DTEND"].dt.hour) + ":" + minute
+        endMinute = int(minute)
+        endHour = int(event["DTEND"].dt.hour)
+        if endHour > 12:
+            end = str(event["DTEND"].dt.hour - 12) + ":" + minute + " pm"
+        else:
+            end = str(event["DTEND"].dt.hour) + ":" + minute + " am"
 
         details = event["DESCRIPTION"]
         isAllDay = False
@@ -109,12 +123,18 @@ for event in events:
         eventDetails.append(details)
         eventAllDays.append(isAllDay)
         eventDayOfWeeks.append(dayOfWeek)
+        eventStartHours.append(startHour)
+        eventStartMinutes.append(startMinute)
+        eventEndHours.append(endHour)
+        eventEndMinutes.append(endMinute)
 
     else:
         name = event["SUMMARY"]
         date = event["DTSTART"].dt
         start = None
         end = None
+        startMinute = None
+        startHour = None
         details = event["DESCRIPTION"]
         isAllDay = True
         dw = str(event['DTSTART'].dt.weekday())
@@ -135,7 +155,7 @@ for event in events:
             dayOfWeek = "Sunday"
         else:
             dayOfWeek = None
-            
+
         eventIDs.append(eventID)
         eventNames.append(name)
         eventDates.append(date)
@@ -144,10 +164,14 @@ for event in events:
         eventDetails.append(details)
         eventAllDays.append(isAllDay)
         eventDayOfWeeks.append(dayOfWeek)
+        eventStartHours.append(startHour)
+        eventStartMinutes.append(startMinute)
+        eventEndHours.append(endHour)
+        eventEndMinutes.append(endMinute)
 
 # Now we put the results into a data frame
 # Put results into DataFrame
-df = pd.DataFrame({"id": eventIDs, "eventDate": eventDates, "eventStartTime": eventStartTimes, "eventEndTime": eventEndTimes, "eventName": eventNames, "eventDetails": eventDetails, "eventIsAllDay": eventAllDays, "eventDayOfWeek": eventDayOfWeeks})
+df = pd.DataFrame({"id": eventIDs, "eventDate": eventDates, "eventStartTime": eventStartTimes, "eventEndTime": eventEndTimes, "eventName": eventNames, "eventDetails": eventDetails, "eventIsAllDay": eventAllDays, "eventDayOfWeek": eventDayOfWeeks,"eventStartHour": eventStartHours,"eventStartMinute": eventStartMinutes,"eventEndHour": eventEndHours,"eventEndMinute": eventEndMinutes})
 
 # Connect to the MSSQL Server
 engine = create_engine('mssql+pyodbc:///?odbc_connect=%s' % params)
