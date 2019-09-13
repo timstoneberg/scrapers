@@ -35,6 +35,7 @@ eventEndTimes = []
 eventNames = []
 eventDetails = []
 eventAllDays = []
+eventDayOfWeeks = []
 
 # Setup the localized time
 utc=pytz.UTC
@@ -80,6 +81,25 @@ for event in events:
 
         details = event["DESCRIPTION"]
         isAllDay = False
+        dw = str(event['DTSTART'].dt.weekday())
+
+        # And some ugly if statements because python doesn't have switch()
+        if dw == "0":
+            dayOfWeek = "Monday"
+        elif dw == "1":
+            dayOfWeek = "Tuesday"
+        elif dw == "2":
+            dayOfWeek = "Wednesday"
+        elif dw == "3":
+            dayOfWeek = "Thursday"
+        elif dw == "4":
+            dayOfWeek = "Friday"
+        elif dw == "5":
+            dayOfWeek = "Saturday"
+        elif dw == "6":
+            dayOfWeek = "Sunday"
+        else:
+            dayOfWeek = None
 
         eventIDs.append(eventID)
         eventNames.append(name)
@@ -88,6 +108,7 @@ for event in events:
         eventEndTimes.append(end)
         eventDetails.append(details)
         eventAllDays.append(isAllDay)
+        eventDayOfWeeks.append(dayOfWeek)
 
     else:
         name = event["SUMMARY"]
@@ -96,7 +117,25 @@ for event in events:
         end = None
         details = event["DESCRIPTION"]
         isAllDay = True
+        dw = str(event['DTSTART'].dt.weekday())
 
+        if dw == "0":
+            dayOfWeek = "Monday"
+        elif dw == "1":
+            dayOfWeek = "Tuesday"
+        elif dw == "2":
+            dayOfWeek = "Wednesday"
+        elif dw == "3":
+            dayOfWeek = "Thursday"
+        elif dw == "4":
+            dayOfWeek = "Friday"
+        elif dw == "5":
+            dayOfWeek = "Saturday"
+        elif dw == "6":
+            dayOfWeek = "Sunday"
+        else:
+            dayOfWeek = None
+            
         eventIDs.append(eventID)
         eventNames.append(name)
         eventDates.append(date)
@@ -104,10 +143,11 @@ for event in events:
         eventEndTimes.append(end)
         eventDetails.append(details)
         eventAllDays.append(isAllDay)
+        eventDayOfWeeks.append(dayOfWeek)
 
 # Now we put the results into a data frame
 # Put results into DataFrame
-df = pd.DataFrame({"id": eventIDs, "eventDate": eventDates, "eventStartTime": eventStartTimes, "eventEndTime": eventEndTimes, "eventName": eventNames, "eventDetails": eventDetails, "eventIsAllDay": eventAllDays})
+df = pd.DataFrame({"id": eventIDs, "eventDate": eventDates, "eventStartTime": eventStartTimes, "eventEndTime": eventEndTimes, "eventName": eventNames, "eventDetails": eventDetails, "eventIsAllDay": eventAllDays, "eventDayOfWeek": eventDayOfWeeks})
 
 # Connect to the MSSQL Server
 engine = create_engine('mssql+pyodbc:///?odbc_connect=%s' % params)
