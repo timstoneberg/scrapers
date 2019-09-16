@@ -10,6 +10,7 @@ import pytz
 import recurring_ical_events
 import pandas as pd
 from sqlalchemy import create_engine
+from dateutil import tz
 
 # Setup the CMELab MSSQL Database connection
 params =   'DRIVER=' + os.getenv("SQLDRIVER") + ';'
@@ -43,10 +44,17 @@ eventDayOfWeeks = []
 
 # Setup the localized time
 utc=pytz.UTC
+fromZone = tz.gettz('UTC')
+toZone = tz.gettz('America/Chicago')
 tdy = datetime.datetime.now()
 tmw = tdy + datetime.timedelta(days=1)
 mdy = tdy - datetime.timedelta(days=tdy.weekday())
 sat = mdy + datetime.timedelta(days=6)
+
+today = tdy
+tomorrow = tmw
+monday = mdy
+saturday = sat
 
 today = utc.localize(tdy)
 tomorrow = utc.localize(tmw)
@@ -66,36 +74,39 @@ eventID = 0
 for event in events:
     eventID = eventID + 1
     if type(event['DTSTART'].dt) is datetime.datetime:
+
+        dtStart = event['DTSTART'].dt.astimezone(toZone)
+        dtEnd = event['DTEND'].dt.astimezone(toZone)
         name = event["SUMMARY"]
-        date = event["DTSTART"].dt.date()
+        date = dtStart.date()
 
-        minute = str(event["DTSTART"].dt.minute)
-        if str(event["DTSTART"].dt.minute) == "0":
+        minute = str(dtStart.minute)
+        if str(dtStart.minute) == "0":
             minute = "00"
-        elif event["DTSTART"].dt.minute < 10:
-            minute = "0" + str(event["DTSTART"].dt.minute)
+        elif dtStart.minute < 10:
+            minute = "0" + str(dtStart.minute)
         startMinute = int(minute)
-        startHour = int(event["DTSTART"].dt.hour)
+        startHour = int(dtStart.hour)
         if startHour > 12:
-            start = str(event["DTSTART"].dt.hour - 12) + ":" + minute + " pm"
+            start = str(dtStart.hour - 12) + ":" + minute + " pm"
         else:
-            start = str(event["DTSTART"].dt.hour) + ":" + minute + " am"
+            start = str(dtStart.hour) + ":" + minute + " am"
 
-        minute = str(event["DTEND"].dt.minute)
-        if str(event["DTEND"].dt.minute) == "0":
+        minute = str(dtEnd.minute)
+        if str(dtEnd.minute) == "0":
             minute = "00"
-        elif event["DTEND"].dt.minute < 10:
-            minute = "0" + str(event["DTEND"].dt.minute)
+        elif dtEnd.minute < 10:
+            minute = "0" + str(dtEnd.minute)
         endMinute = int(minute)
-        endHour = int(event["DTEND"].dt.hour)
+        endHour = int(dtEnd.hour)
         if endHour > 12:
-            end = str(event["DTEND"].dt.hour - 12) + ":" + minute + " pm"
+            end = str(dtEnd.hour - 12) + ":" + minute + " pm"
         else:
-            end = str(event["DTEND"].dt.hour) + ":" + minute + " am"
+            end = str(dtEnd.hour) + ":" + minute + " am"
 
         details = event["DESCRIPTION"]
         isAllDay = False
-        dw = str(event['DTSTART'].dt.weekday())
+        dw = str(dtStart.weekday())
 
         # And some ugly if statements because python doesn't have switch()
         if dw == "0":
