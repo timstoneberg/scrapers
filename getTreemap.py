@@ -32,4 +32,5 @@ if __name__ == '__main__':
             copyfileobj(in_stream, out_file)
 
     driver.close()
+    driver.quit()
 
