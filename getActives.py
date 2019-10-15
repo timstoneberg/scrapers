@@ -57,7 +57,7 @@ for listing in soup.find_all('tr', attrs={'class': re.compile('table\-(?:(?!\-ro
         item = item.replace(',', '')
 
         if(i == 1):
-            item = item[:20]
+            item = item[:12]
             activeNYSENames.append(item)
         if(i == 7):
             activeNYSEPrices.append(item)
@@ -91,7 +91,7 @@ for listing in soup.find_all('tr', attrs={'class': re.compile('table\-(?:(?!\-ro
         item = item.replace(',', '')
 
         if(i == 1):
-            item = item[:20]
+            item = item[:12]
             activeNASDAQNames.append(item)
         if(i == 7):
             activeNASDAQPrices.append(item)

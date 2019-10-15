@@ -31,6 +31,36 @@ if __name__ == '__main__':
         with open(path_out, 'wb') as out_file:
             copyfileobj(in_stream, out_file)
 
+    request = "https://finviz.com/map.ashx?t=sec&st=w52"
+    driver.get(request)
+    time.sleep(5)
+
+    share_map = driver.find_element_by_class_name("zoom")
+    share_map = share_map.find_elements_by_tag_name("span")[-1]
+    share_map.click()
+    modal_body = driver.find_element_by_id("modal-body")
+    time.sleep(5)
+    link = modal_body.find_element_by_tag_name("img").get_property("src")
+    path_out = "/home/analyticslab/rise-display/map_sp500_1y.png"
+    with closing(urlopen(link)) as in_stream:
+        with open(path_out, 'wb') as out_file:
+            copyfileobj(in_stream, out_file)
+
+    request = "https://finviz.com/map.ashx?t=sec&st=w26"
+    driver.get(request)
+    time.sleep(5)
+
+    share_map = driver.find_element_by_class_name("zoom")
+    share_map = share_map.find_elements_by_tag_name("span")[-1]
+    share_map.click()
+    modal_body = driver.find_element_by_id("modal-body")
+    time.sleep(5)
+    link = modal_body.find_element_by_tag_name("img").get_property("src")
+    path_out = "/home/analyticslab/rise-display/map_sp500_6m.png"
+    with closing(urlopen(link)) as in_stream:
+        with open(path_out, 'wb') as out_file:
+            copyfileobj(in_stream, out_file)
+
+
     driver.close()
-    driver.quit()
 
