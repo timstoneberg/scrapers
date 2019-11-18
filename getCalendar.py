@@ -105,8 +105,11 @@ class MyCalEvent:
         startMinute = int(minute)
         startHour = int(dtStart.hour)
 
-        if startHour > 12:
-            start = str(dtStart.hour - 12) + ":" + minute + " pm"
+        if startHour >= 12:
+            if startHour == 12:
+                start = str(dtStart.hour) + ":" + minute + " pm"
+            else:
+                start = str(dtStart.hour - 12) + ":" + minute + " pm"
         else:
             start = str(dtStart.hour) + ":" + minute + " am"
 
@@ -117,8 +120,12 @@ class MyCalEvent:
             minute = "0" + str(dtEnd.minute)
         endMinute = int(minute)
         endHour = int(dtEnd.hour)
-        if endHour > 12:
-            end = str(dtEnd.hour - 12) + ":" + minute + " pm"
+
+        if endHour >= 12:
+            if endHour == 12:
+                end = str(dtEnd.hour) + ":" + minute + " pm"
+            else:
+                end = str(dtEnd.hour - 12) + ":" + minute + " pm"
         else:
             end = str(dtEnd.hour) + ":" + minute + " am"
 
