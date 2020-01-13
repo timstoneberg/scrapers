@@ -114,6 +114,14 @@ for listing in soup.find_all('tr', attrs={'class': re.compile('table\-(?:(?!\-ro
 activesNYSE = pd.DataFrame({"name": activeNYSENames, "close": activeNYSEPrices, "change": activeNYSEChanges, "pchange": activeNYSEPercentChanges, "volume": activeNYSETotalVolumes, "timestamp": timestamp})
 activesNASDAQ = pd.DataFrame({"name": activeNASDAQNames, "close": activeNASDAQPrices, "change": activeNASDAQChanges, "pchange": activeNASDAQPercentChanges, "volume": activeNASDAQTotalVolumes, "timestamp": timestamp})
 
+if activesNYSE.empty:
+    print("Exiting due to empty NYSE dataframe.")
+    exit()
+
+if activesNASDAQ.empty:
+    print("Exiting due to empty NASDAQ dataframe.")
+    exit()
+
 # Connect to the MSSQL Server
 engine = create_engine('mssql+pyodbc:///?odbc_connect=%s' % params)
 print("Writing NYSE most actives to SQL Server")

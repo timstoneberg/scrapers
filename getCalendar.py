@@ -266,6 +266,10 @@ for item in allEvents:
 # Put results into DataFrame
 df = pd.DataFrame({"uid": eventUIDs, "cuid": eventCustomUIDs, "eventDate": eventDates, "eventStartTime": eventStartTimes, "eventEndTime": eventEndTimes, "eventName": eventNames, "eventDetails": eventDetails, "eventIsAllDay": eventAllDays, "eventDayOfWeek": eventDayOfWeeks,"eventStartHour": eventStartHours,"eventStartMinute": eventStartMinutes,"eventEndHour": eventEndHours,"eventEndMinute": eventEndMinutes})
 
+if df.empty:
+    print("Exiting due to empty df dataframe.")
+    exit()
+
 # Connect to the MSSQL Server
 engine = create_engine('mssql+pyodbc:///?odbc_connect=%s' % params)
 print("Writing Calendar entries to SQL Server")

@@ -120,6 +120,18 @@ for row in tickerList:
 
 print("Data pull from Alphavantage successful.")
 
+if totalTimestampData.empty:
+    print("Exiting due to empty totalTimestampData dataframe.")
+    exit()
+
+if totalChangeData.empty:
+    print("Exiting due to empty totalChangeData dataframe.")
+    exit()
+
+if totalData.empty:
+    print("Exiting due to empty totalData dataframe.")
+    exit()
+
 # Write the data to the server
 print("Writing timestamp data to SQL Server at " + str(time.ctime(int(time.time()))))
 totalTimestampData.to_sql(name='stocksTimestamp', con=engine, if_exists='replace', index=True)
