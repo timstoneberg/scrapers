@@ -78,7 +78,7 @@ tickerList = {
 
 # Connect to the MSSQL Server
 engine = create_engine('mssql+pyodbc:///?odbc_connect=%s' % params)
-tickerList = engine.execute('SELECT * FROM stocks')
+tickerList = engine.execute('SELECT * FROM Stocks')
 
 # Get the Alphavantage data
 totalData = pd.DataFrame()
@@ -134,10 +134,10 @@ if totalData.empty:
 
 # Write the data to the server
 print("Writing timestamp data to SQL Server at " + str(time.ctime(int(time.time()))))
-totalTimestampData.to_sql(name='stocksTimestamp', con=engine, if_exists='replace', index=True)
+totalTimestampData.to_sql(name='StocksTimestamp', con=engine, if_exists='replace', index=True)
 print("Writing daily change data to SQL Server now.")
-totalChangeData.to_sql(name='dailyChange', con=engine, if_exists='replace', index=False)
+totalChangeData.to_sql(name='DailyChange', con=engine, if_exists='replace', index=False)
 print("Writing daily data to SQL Server at " + str(time.ctime(int(time.time()))))
-totalData.to_sql(name='dailyData', con=engine, if_exists='replace', index=False)
+totalData.to_sql(name='DailyData', con=engine, if_exists='replace', index=False)
 
 print("Done")

@@ -111,8 +111,8 @@ for listing in soup.find_all('tr', attrs={'class': re.compile('table\-(?:(?!\-ro
         activeNASDAQChanges.append("0.00")
 
 # Put results into DataFrame
-activesNYSE = pd.DataFrame({"name": activeNYSENames, "close": activeNYSEPrices, "change": activeNYSEChanges, "pchange": activeNYSEPercentChanges, "volume": activeNYSETotalVolumes, "timestamp": timestamp})
-activesNASDAQ = pd.DataFrame({"name": activeNASDAQNames, "close": activeNASDAQPrices, "change": activeNASDAQChanges, "pchange": activeNASDAQPercentChanges, "volume": activeNASDAQTotalVolumes, "timestamp": timestamp})
+activesNYSE = pd.DataFrame({"Name": activeNYSENames, "Close": activeNYSEPrices, "Change": activeNYSEChanges, "PChange": activeNYSEPercentChanges, "Volume": activeNYSETotalVolumes, "Timestamp": timestamp})
+activesNASDAQ = pd.DataFrame({"Name": activeNASDAQNames, "Close": activeNASDAQPrices, "Change": activeNASDAQChanges, "PChange": activeNASDAQPercentChanges, "Volume": activeNASDAQTotalVolumes, "Timestamp": timestamp})
 
 if activesNYSE.empty:
     print("Exiting due to empty NYSE dataframe.")
@@ -125,8 +125,8 @@ if activesNASDAQ.empty:
 # Connect to the MSSQL Server
 engine = create_engine('mssql+pyodbc:///?odbc_connect=%s' % params)
 print("Writing NYSE most actives to SQL Server")
-activesNYSE.to_sql(name='activesNYSE', con=engine, if_exists='replace', index=False)
+activesNYSE.to_sql(name='ActivesNyse', con=engine, if_exists='replace', index=False)
 print("Writing NASDAQ most actives to SQL Server")
-activesNASDAQ.to_sql(name='activesNasdaq', con=engine, if_exists='replace', index=False)
+activesNASDAQ.to_sql(name='ActivesNasdaq', con=engine, if_exists='replace', index=False)
 
 print("Done")

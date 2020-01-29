@@ -273,6 +273,6 @@ if df.empty:
 # Connect to the MSSQL Server
 engine = create_engine('mssql+pyodbc:///?odbc_connect=%s' % params)
 print("Writing Calendar entries to SQL Server")
-df.to_sql(name='calendarEvents', con=engine, if_exists='replace', index=False)
+df.to_sql(name='GoogleCalendarEvents', con=engine, if_exists='replace', index=False)
 
 print("Done")
