@@ -26,7 +26,7 @@ if __name__ == '__main__':
     modal_body = driver.find_element_by_id("modal-body")
     time.sleep(5)
     link = modal_body.find_element_by_tag_name("img").get_property("src")
-    path_out = "/home/analyticslab/CMELabDisplayScripts/map_sp500.png"
+    path_out = "/home/analyticslab/CMELabDisplayScripts/images/map_sp500.png"
     with closing(urlopen(link)) as in_stream:
         with open(path_out, 'wb') as out_file:
             copyfileobj(in_stream, out_file)
@@ -41,7 +41,7 @@ if __name__ == '__main__':
     modal_body = driver.find_element_by_id("modal-body")
     time.sleep(5)
     link = modal_body.find_element_by_tag_name("img").get_property("src")
-    path_out = "/home/analyticslab/CMELabDisplayScripts/map_sp500_1y.png"
+    path_out = "/home/analyticslab/CMELabDisplayScripts/images/map_sp500_1y.png"
     with closing(urlopen(link)) as in_stream:
         with open(path_out, 'wb') as out_file:
             copyfileobj(in_stream, out_file)
@@ -56,7 +56,7 @@ if __name__ == '__main__':
     modal_body = driver.find_element_by_id("modal-body")
     time.sleep(5)
     link = modal_body.find_element_by_tag_name("img").get_property("src")
-    path_out = "/home/analyticslab/CMELabDisplayScripts/map_sp500_6m.png"
+    path_out = "/home/analyticslab/CMELabDisplayScripts/images/map_sp500_6m.png"
     with closing(urlopen(link)) as in_stream:
         with open(path_out, 'wb') as out_file:
             copyfileobj(in_stream, out_file)

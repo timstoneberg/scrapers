@@ -87,9 +87,9 @@ totalTimestampData = pd.DataFrame()
 timestamp = str(time.ctime(int(time.time())))
 
 for row in tickerList:
-    stockID = row['id']
-    stockTicker = row['ticker']
-    stockName = row['name'][:25]
+    stockID = row['Id']
+    stockTicker = row['Ticker']
+    stockName = row['Name'][:25]
 
     # Get the data
     print("Fetching " + stockTicker + " from Alphavantage.com at " + str(time.ctime(int(time.time()))))

@@ -17,7 +17,7 @@ params =   'DRIVER=' + os.getenv("SQLDRIVER") + ';'
 params +=  'fast_executemany=True;'
 params +=  'SERVER=' + os.getenv("SQLSERVER") + ';'
 params +=  'PORT=' + os.getenv("SQLPORT") + ';'
-params +=  'DATABASE=RiseDisplay;'
+params +=  'DATABASE=CMELabDisplay;'
 params +=  'UID=' + os.getenv("SQLUID") + ';'
 params +=  'PWD=' + os.getenv("SQLPASS") + ';'
 
