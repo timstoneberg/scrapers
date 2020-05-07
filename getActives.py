@@ -43,7 +43,7 @@ activeNASDAQTotalVolumes = []
 activeNASDAQURL = "https://finviz.com/screener.ashx?v=111&s=ta_mostactive&f=exch_nasd"
 
 # Scrape Finviz for NYSE
-r = requests.get(activeNYSEURL)
+r = requests.get(activeNYSEURL, headers={'User-Agent': 'Mozilla/5.0'})
 data = r.text
 soup = BeautifulSoup(data, features='lxml')
 
@@ -76,7 +76,7 @@ for listing in soup.find_all('tr', attrs={'class': re.compile('table\-(?:(?!\-ro
     else:
         activeNYSEChanges.append("0.00")
 # Scrape Finviz for NASDAQ
-r = requests.get(activeNASDAQURL)
+r = requests.get(activeNASDAQURL, headers={'User-Agent': 'Mozilla/5.0'})
 data = r.text
 soup = BeautifulSoup(data, features='lxml')
 
