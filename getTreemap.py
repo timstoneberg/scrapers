@@ -24,11 +24,19 @@ if __name__ == '__main__':
     
     share_map = driver.find_element_by_class_name("zoom")
     share_map = share_map.find_elements_by_tag_name("span")[-1]
-    share_map.click()
+    
+    # New anti-anti click measure
+    # driver.execute_script("arguments[0].click();", share_map)
+    webdriver.ActionChains(driver).move_to_element(share_map).click(share_map).perform()
+
+    #share_map.click()
     modal_body = driver.find_element_by_id("modal-form")
     time.sleep(5)
     link = modal_body.find_element_by_tag_name("img").get_property("src")
-    path_out = "/home/analyticslab/CMELabDisplayScripts/images/map_sp500.png"
+    
+    # New direct path
+    path_out = "/home/vhost/www/CMELabDisplay/wwwroot/images/map_sp500.png"
+    #path_out = "/home/analyticslab/CMELabDisplayScripts/images/map_sp500.png"
 
     req = urllib2.Request(link)
     req.add_header('User-Agent', 'Mozilla/5.0')
@@ -45,11 +53,19 @@ if __name__ == '__main__':
 
     share_map = driver.find_element_by_class_name("zoom")
     share_map = share_map.find_elements_by_tag_name("span")[-1]
-    share_map.click()
+    
+    # New anti-anti click measure
+    # driver.execute_script("arguments[0].click();", share_map)
+    webdriver.ActionChains(driver).move_to_element(share_map).click(share_map).perform()
+
+    #share_map.click()
     modal_body = driver.find_element_by_id("modal-body")
     time.sleep(5)
     link = modal_body.find_element_by_tag_name("img").get_property("src")
-    path_out = "/home/analyticslab/CMELabDisplayScripts/images/map_sp500_1y.png"
+    
+    # New direct path
+    path_out = "/home/vhost/www/CMELabDisplay/wwwroot/images/map_sp500_1y.png"
+    #path_out = "/home/analyticslab/CMELabDisplayScripts/images/map_sp500_1y.png"
     
     req = urllib2.Request(link)
     req.add_header('User-Agent', 'Mozilla/5.0')
@@ -66,11 +82,19 @@ if __name__ == '__main__':
 
     share_map = driver.find_element_by_class_name("zoom")
     share_map = share_map.find_elements_by_tag_name("span")[-1]
-    share_map.click()
+    
+    # New anti-anti click measure
+    # driver.execute_script("arguments[0].click();", share_map)
+    webdriver.ActionChains(driver).move_to_element(share_map).click(share_map).perform()
+
+    #share_map.click()
     modal_body = driver.find_element_by_id("modal-body")
     time.sleep(5)
     link = modal_body.find_element_by_tag_name("img").get_property("src")
-    path_out = "/home/analyticslab/CMELabDisplayScripts/images/map_sp500_6m.png"
+    
+    # New direct path
+    path_out = "/home/vhost/www/CMELabDisplay/wwwroot/images/map_sp500_6m.png"
+    #path_out = "/home/analyticslab/CMELabDisplayScripts/images/map_sp500_6m.png"
     
     req = urllib2.Request(link)
     req.add_header('User-Agent', 'Mozilla/5.0')
